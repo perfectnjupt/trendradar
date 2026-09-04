@@ -170,6 +170,23 @@ jobs:
         run: uv run python -m trendradar
 
       # --------------------------------------------------------------------------------
+      # 📦 REPORT ARTIFACT / 报告归档（本仓库定制新增）
+      # --------------------------------------------------------------------------------
+      # 未配置推送渠道/Cloudflare 时，报告仅在 runner 上生成后丢弃。
+      # 此步骤把 index.html + output/ 归档为 artifact（保留 14 天），供网页或 gh CLI 下载查看。
+      # --------------------------------------------------------------------------------
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-${{ github.run_id }}
+          path: |
+            index.html
+            output/
+          retention-days: 14
+          if-no-files-found: warn
+
+      # --------------------------------------------------------------------------------
       # ☁️ CLOUDFLARE PAGES DEPLOY / 部署到 Cloudflare Pages（可选）
       # --------------------------------------------------------------------------------
       # 将爬虫生成的 index.html 自动部署到 Cloudflare Pages，国内访问比 GitHub Pages 更快。
